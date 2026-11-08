@@ -2,102 +2,137 @@
 
 ### Capture freely. Clarify deliberately. Keep your data portable.
 
-A planned **Getting Things Done (GTD)** application for collecting thoughts, organizing projects, and connecting knowledge with people. Start with a calm Inbox, sort one card at a time, and keep devices in sync over local Wi-Fi without an external server. A single Excel workbook provides portable backup and restore.
+A **Getting Things Done (GTD)** application that stores your workspace on your own devices. Capture a thought, process one Inbox card at a time, organize projects and personal lists, then move your system between devices over the local network or in one Excel workbook.
 
-> **Status: requirements gathering.** This repository currently contains documentation only. The features below describe the intended product; they are not implemented yet. Requirements are still being collected.
+> **Development build.** The application is implemented for development and review. Automated checks and native build results are recorded in the [QA report](docs/QA_REPORT.md); physical-device, network and platform checks are kept distinct from those results.
 
-[Product specification & implementation checklist](docs/PRODUCT_SPEC.md) · [Planned experience](#planned-experience) · [Data portability](#data-portability) · [Development status](#development-status)
+[Get started](#get-started) · [Features](#features) · [Device synchronization](#device-synchronization) · [Data portability](#data-portability) · [Architecture](docs/ARCHITECTURE.md) · [Product checklist](docs/PRODUCT_SPEC.md)
 
-## Why this project?
+![Inbox in the native Linux development build](docs/screenshots/desktop-inbox.png)
 
-Capturing an idea should take seconds. Processing a full Inbox should feel manageable. Moving to another device should preserve the work you have already done.
+*Actual Linux development build running in Xvfb. Android appearance and device behavior require separate validation.*
 
-Just Organize Yourself aims to bring those needs together: a focused capture interface, structured GTD organization, mobile swipe sorting, and a portable data format that remains useful outside the app.
+## Features
 
-## Planned experience
-
-| Area | Intended experience |
+| Area | Experience |
 | --- | --- |
-| **Inbox first** | Open directly into a large, centered text field. Add an item with Enter or the send button, then scroll through previously captured items while the composer stays accessible. |
-| **Persistent organization** | Keep Inbox items and all other GTD data between sessions, including creation times and future task attributes. |
-| **Your folders, your structure** | Create, rename, describe, and reorder folders and subfolders. Start from editable GTD presets, including Shopping Lists, and organize purchases by supermarket, pharmacy, or marketplace. |
-| **Projects with a clear outcome** | Turn an Inbox item into a project with a title, description, free-text plan, completion criterion, and at least one action. Add further actions without the form growing beyond the screen. |
-| **Focused processing** | See one Inbox card at a time with a gentle remaining-work indicator: exact counts up to ten, approximate bands above that. |
-| **Swipes & numpad** | Configure eight swipe directions plus tap on a phone, and numpad keys 1–9 on a computer. Actions can file a card, open a submenu, show details, or edit. Reach destinations through two or three gestures rather than being limited to eight folders. |
-| **Project drafts** | Keep sorting when a card becomes a project. Complete pending project forms afterward, one at a time. Projects can be grouped inside subfolders. |
-| **Similar-item hints** | While typing, browse nonblocking suggestions for existing tasks with matching words or word forms. Select an existing task to discard the current draft instead of creating a duplicate. |
-| **Trash** | Route unwanted cards to a required Trash folder. Automatically remove them after a configurable number of days. |
-| **Calendar & delegation** | Schedule an item with date and time for Google Calendar exchange, or record whom a task is delegated to and its date. Include starter categories for later, urgent, dated, and conditional work. |
-| **Knowledge & Contacts** | Store titled entries with descriptions and creation times, and explore both categories in one graph with distinct colors. |
-| **Local semantic discovery** | Optionally use a lightweight local embedding model to place related knowledge and contacts near each other. Desktop processing can happen later for entries captured on a phone. |
+| **Inbox first** | A centered capture field, Enter or send-button submission, optional description, persistent entries and a scrollable history. |
+| **Folders & subfolders** | Create, rename, describe and reorder your organization. Start with editable GTD categories and Shopping Lists, then add sections for supermarkets, pharmacies or marketplaces. |
+| **Projects** | A title, description, free-text plan, completion criterion and ordered actions. Group projects in subfolders; complete mobile project drafts after processing the Inbox. |
+| **Focused processing** | One active card, an exact remaining count up to ten and approximate bands above that. Configure eight swipe directions plus tap, or numpad keys 1–9, with menus and direct destinations. |
+| **Similar-item hints** | Browse existing tasks while typing without covering the capture field. Selecting a suggestion discards only the unsaved draft. Lightweight word matching works without an embedding model. |
+| **Trash** | Configurable retention in days. Expired text and extra data are cleared while minimal deletion history remains for synchronization. |
+| **Calendar & delegation** | Record dates, times and an assignee. Export calendar events to `.ics` for Google Calendar. Reverse calendar import is outside the agreed scope. |
+| **Knowledge & Contacts** | One graph with two category colors, optional local semantic embeddings and stored layout for later viewing. Ordinary GTD work remains available without a model. |
+| **Portable workspace** | SQLite for daily work; one `.xlsx` for data, hierarchy, settings, revisions, deletion markers and supported embedding metadata. |
 
-Starter folders provide a useful GTD setup, not a fixed taxonomy. Users can customize the structure and filing shortcuts. Trash must remain available; the exact treatment of other built-in entry points when deleting presets still needs design.
+## Get started
 
-## Local device synchronization
+The interface is written in **Flutter and Dart**. Android is the first mobile target; Linux, Windows and macOS platform projects are included. iOS is not part of this implementation. Native platform validation depends on the host and available devices; see the QA report for what was actually built and run.
 
-**Wi-Fi synchronization is a required core feature**, with manual XLSX transfer as an alternative. Devices on the same home network or phone hotspot exchange data directly; no external synchronization server is required.
+Prerequisites:
 
-The proposed pairing experience is **Synchronize → find a nearby device → confirm a code**, with QR pairing and a manual address/port fallback when discovery is unavailable. This is a design proposal, not an implemented protocol.
+- Flutter SDK at the version recorded in [.flutter-version](.flutter-version), with its bundled Dart SDK.
+- Android SDK and a JDK for Android builds; use `flutter doctor` to check the toolchain and SDK licenses.
+- The native Flutter toolchain for your desktop target when building a desktop executable.
+- Python 3.11 or newer only when using the separate optional embedding service.
 
-New items from both devices must survive. Conflicting versions must show their differences and let the user choose which version to keep. A device with more items must not silently overwrite changes on the other device just because its collection is larger.
+From the repository root:
+
+```sh
+make deps
+make check
+```
+
+To run on an Android device or emulator:
+
+```sh
+cd apps/joy
+flutter devices
+flutter run -d <device-id>
+```
+
+To build an ARM64 Android development APK:
+
+```sh
+make android
+```
+
+Flutter writes it to `apps/joy/build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk`. This is a development artifact, not a store release or production signing setup.
+
+To run the Linux client with its native toolchain installed:
+
+```sh
+make run
+```
+
+On a suitable Windows or macOS host, run `flutter run -d windows` or `flutter run -d macos` from `apps/joy`. The presence of platform files is not a claim that those builds have been tested on this Linux host.
+
+The client opens `joy.sqlite` in the platform's application-support directory. It does not require a database server, Python process or cloud account for capture, organization, file exchange or peer synchronization.
+
+## Device synchronization
+
+Connect the devices to the same home Wi-Fi or phone hotspot:
+
+1. Open **Synchronize** on the receiving device and choose **Make this device available**.
+2. On the other device, enter the receiver's displayed local address and pairing code.
+3. Review differences, select versions for conflicts and apply the result.
+4. Stop sharing when finished.
+
+The current implementation uses manual address/code pairing. Automatic discovery and QR pairing are not implemented. The temporary receiver uses **HTTP on a trusted local network**; a pairing code does not encrypt traffic. An external synchronization server is not required.
+
+Independent additions from both devices are retained. Revisions and deletion history distinguish an unchanged older copy from a conflicting edit. Visible task numbers are derived from creation time and stable ID; matching numbers do not merge different tasks.
+
+If deleting a folder would leave independent live children without a parent, that choice is blocked with an explanation. Keep the folder or move its children before synchronizing again. The app does not silently delete or relocate those tasks.
+
+The core receiver can also run independently for development:
+
+```sh
+cd packages/joy_core
+dart run bin/peer.dart joy.sqlite
+```
+
+Client isolation on a Wi-Fi network, firewall rules and mobile operating-system restrictions can prevent a connection. Loopback tests do not establish that a physical phone/hotspot scenario has passed.
 
 ## Data portability
 
 **Your GTD system → `.xlsx` → another device → your GTD system.**
 
-The exchange format is an Excel `.xlsx` workbook: **folders are sheets; subfolders are represented within those sheets**. Projects add another level inside their group, with actions belonging to the correct project. Export must preserve the structure, empty folders, names, descriptions, ordering, settings, creation times, and other supported metadata so an import can reconstruct the system.
+Folders become workbook sheets; subfolders are represented within their folder's sheet. Projects retain their group, actions and ordering. A metadata sheet keeps the portable schema and settings, so the workbook is sufficient to restore the user system. Optional model weights are installed separately.
 
-- **Whole-system import:** choose between adding to existing data and replacing it. Adding is the default, safer action.
-- **New folders:** add nonconflicting folders and subfolders found in an imported workbook without changing the existing organization.
-- **Undo import:** immediately undo either an addition or a replacement and recover the previous state.
-- **Inbox-only import:** load a simple workbook, including a single column without a header. Each nonempty row becomes an Inbox item. Items without creation times receive the same UTC timestamp for that import batch.
-- **Extensible metadata:** account for future attributes such as priority and duration, as well as embedding data when available.
+- **Add is the default:** new nonconflicting folders and records are combined with existing data; conflicting versions are reviewed.
+- **Replace is explicit:** restore the selected state while recording the intentional changes and deletions for later synchronization.
+- **Undo either import:** restore the complete previous state until the next data mutation. Navigation and scrolling do not remove this option.
+- **Import only Inbox:** accept an ordinary `.xlsx`, including one column without a header. Each nonempty row becomes an item; missing creation dates share one UTC timestamp for that file load.
+- **Preserve supported metadata:** descriptions, UTC timestamps, extra attributes, empty sections, project relations, controls and embedding data travel with the workspace.
 
-Restoring the user system must need only **one `.xlsx` file**, with at most a separately installed optional embedding model. The primary runtime storage format, detailed workbook schema, duplicate handling, and local synchronization protocol still need design. Direct `.xlsx` storage remains an option. Legacy `.xls` support has not been specified.
+The workbook schema, long-cell handling and native exchange API are documented in [component contracts](docs/CONTRACTS.md). Legacy binary `.xls` is not supported. An export creates a file and does not mutate the workspace.
+
+## Optional local embeddings
+
+The separately started Python service computes embeddings for Knowledge and Contacts and produces graph positions. The tested model is a quantized multilingual MiniLM model with 384 dimensions and approximately **267 MB** of artifacts, below the agreed 1 GB model-file budget.
+
+Installation and download are explicit. Startup uses verified local weights and does not fetch a model silently. Without weights, the service reports that embeddings are unavailable; your GTD data remains usable.
+
+See [the embedding service instructions](services/embeddings/README.md) for installation, checksum verification, API examples, tests and resource notes. Real model tests are recorded separately from tests using synthetic vectors. Disk size and inference RAM are different measurements.
 
 ## Languages
 
-English is the default interface language. The planned language set is:
+The interface includes English (`en`), Russian (`ru`), French (`fr`), Spanish (`es`), German (`de`) and Serbian (`sr`). English is the default; Serbian currently uses Cyrillic. Language selection is saved locally and travels in portable settings. User text and stable data identifiers are not translated when the interface language changes.
 
-| Language | Locale |
+## Components and verification
+
+| Component | Responsibility |
 | --- | --- |
-| English | `en` |
-| Russian | `ru` |
-| French | `fr` |
-| Spanish | `es` |
-| German | `de` |
-| Serbian | `sr` — script to be decided |
+| [apps/joy](apps/joy) | Flutter screens, input, localization and review dialogs |
+| [packages/joy_core](packages/joy_core) | Shared Dart domain, SQLite, XLSX, calendar export and local peer exchange |
+| [services/embeddings](services/embeddings) | Independently started optional Python computation service |
 
-Language selection must not change user content or portable field identifiers. Stored creation times use UTC.
+Useful documentation:
 
-## Roadmap & acceptance
+- [Product specification and implementation checklist](docs/PRODUCT_SPEC.md) — requirements, acceptance scenarios and open decisions, in Russian.
+- [Architecture](docs/ARCHITECTURE.md) and [contracts](docs/CONTRACTS.md) — ownership, schemas and interaction between components.
+- [QA report](docs/QA_REPORT.md) — actual test evidence and remaining limitations.
+- [Contributing](CONTRIBUTING.md) — development checks and architect/critic review responsibilities.
 
-The [product specification](docs/PRODUCT_SPEC.md) records requirements in Russian for review with the project owner. It contains stable requirement IDs, implementation subtasks, acceptance criteria, verification scenarios, and open decisions.
-
-Planned work is grouped into:
-
-1. Durable data, customizable folders, and Inbox capture with similar-item hints.
-2. Lossless one-file export, safe import, and undo.
-3. Project creation, grouping, and action lists.
-4. Focused card processing with configurable swipe/numpad menus and Trash.
-5. Direct Wi-Fi synchronization and visible conflict resolution.
-6. Calendar exchange, delegation, and starter GTD workflows.
-7. Knowledge, Contacts, and a shared semantic graph.
-8. Localization across the six requested languages.
-
-This is a provisional grouping, not a committed release sequence. A feature is complete only after implementation and verification; documenting a requirement does not complete it.
-
-## Development status
-
-No application code, selected technology stack, dependency manifests, build commands, or test runner exist yet. There are no installation or launch instructions to execute at this stage. Those instructions will be added and verified when implementation begins.
-
-While requirements are being gathered:
-
-- Capture incoming requirements before implementing features.
-- Extend the specification as the owner continues describing the product.
-- Record architectural proposals separately from confirmed product requirements.
-- Update checklist status with evidence of implementation and verification.
-
-## Longer-term exploration
-
-The original project vision also mentions local agents that learn the user's Inbox sorting patterns. Their behavior, training, resource budget, and relationship to semantic embeddings remain unspecified. They are a future idea rather than a current implementation commitment.
+Tests cover storage, workbook round trips and undo, revision-aware peer exchange, Flutter interactions and the Python API. See the QA report for the current executed counts and results. Native Android, physical-device gestures, household Wi-Fi, Google Calendar and other desktop platforms require their own evidence; they are not inferred from unit tests.

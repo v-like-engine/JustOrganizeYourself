@@ -1,0 +1,22 @@
+name: joy
+description: A private, portable GTD workspace.
+publish_to: none
+version: 0.1.0+1
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  joy_core:
+    path: ../../packages/joy_core
+  path_provider: ^2.1.5
+  file_picker: ^10.3.10
+  sqlite3_flutter_libs: ^0.5.41
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+flutter:
+  uses-material-design: true

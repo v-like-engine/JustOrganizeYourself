@@ -1,0 +1,14 @@
+name: joy_core
+description: Offline data, workbook exchange and peer synchronization for Just Organize Yourself.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+dependencies:
+  sqlite3: ^2.7.5
+  uuid: ^4.5.1
+  crypto: ^3.0.6
+  excel: ^4.0.6
+dev_dependencies:
+  test: ^1.25.8
+  lints: ^5.0.0
