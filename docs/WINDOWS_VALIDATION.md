@@ -47,3 +47,7 @@ Publishing the final release metadata worked through the configured GitHub API a
 - This preview is unsigned. A code-signing certificate is not fabricated or presented as trusted.
 
 The runner has development tools installed, so this is not a test on every clean consumer Windows image. Native startup deliberately excludes SDK/tool directories from the child process's `PATH` and verifies the actual module paths. No claim is made about all Windows devices, macOS, physical Android, or real household Wi-Fi from this run.
+
+## JOY icon update, 0.1.1
+
+[Windows preview 0.1.1](https://github.com/v-like-engine/JustOrganizeYourself/releases/tag/v0.1.1-windows-preview.2) uses the upright JOY checklist artwork. The [tagged Windows run](https://github.com/v-like-engine/JustOrganizeYourself/actions/runs/42542587101), source `6902e9b993705b365969c6b489516b783fb93b73`, passed release compilation, package creation, core/interface checks and native portable/installed startup with preserved user data. All seven source ICO frames were found in both the compiled EXE and installer, and the bundled Flutter artwork matched the exported PNG. Release checksums were independently verified. Installer version is derived from `pubspec.yaml`, and application/data identity is unchanged.

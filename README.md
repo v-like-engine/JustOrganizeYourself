@@ -18,12 +18,12 @@ A **Getting Things Done (GTD)** application that stores your workspace on your o
 
 For Windows 10 (2004 or newer) and Windows 11, x64:
 
-- **[Download the installer](https://github.com/v-like-engine/JustOrganizeYourself/releases/download/v0.1.0-windows-preview.1/JOY-Windows-Setup.exe)** — install for your user account, then open the app from the Start menu or desktop shortcut. Administrator rights are not required.
-- **[Download the portable ZIP](https://github.com/v-like-engine/JustOrganizeYourself/releases/download/v0.1.0-windows-preview.1/JOY-Windows-Portable.zip)** — extract the whole archive and double-click `JustOrganizeYourself.exe`.
+- **[Download the installer](https://github.com/v-like-engine/JustOrganizeYourself/releases/download/v0.1.1-windows-preview.2/JOY-Windows-Setup.exe)** — install for your user account, then open the app from the Start menu or desktop shortcut. Administrator rights are not required.
+- **[Download the portable ZIP](https://github.com/v-like-engine/JustOrganizeYourself/releases/download/v0.1.1-windows-preview.2/JOY-Windows-Portable.zip)** — extract the whole archive and double-click `JustOrganizeYourself.exe`.
 
 Flutter, Visual Studio, Python, Java and a separate database installation are not required to use these packages. Runtime libraries are bundled. Your tasks stay in your Windows user profile when the application is updated or uninstalled.
 
-This preview is unsigned, so Windows may show an unknown-publisher warning. See the [Windows guide in Russian](docs/WINDOWS.md) and the [release page](https://github.com/v-like-engine/JustOrganizeYourself/releases/tag/v0.1.0-windows-preview.1) for instructions and checksums. Optional semantic embeddings remain a separate component.
+This preview is unsigned, so Windows may show an unknown-publisher warning. See the [Windows guide in Russian](docs/WINDOWS.md) and the [release page](https://github.com/v-like-engine/JustOrganizeYourself/releases/tag/v0.1.1-windows-preview.2) for instructions and checksums. Optional semantic embeddings remain a separate component.
 
 ## Features
 

@@ -6,7 +6,7 @@
 
 ## Вариант 1 — установщик
 
-1. Откройте [Windows preview](https://github.com/v-like-engine/JustOrganizeYourself/releases/tag/v0.1.0-windows-preview.1).
+1. Откройте [Windows preview](https://github.com/v-like-engine/JustOrganizeYourself/releases/tag/v0.1.1-windows-preview.2).
 2. Скачайте **JOY-Windows-Setup.exe** и откройте его.
 3. Завершите установку и запустите **Just Organize Yourself** из меню «Пуск» или с рабочего стола.
 
