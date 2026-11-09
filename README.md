@@ -6,11 +6,22 @@ A **Getting Things Done (GTD)** application that stores your workspace on your o
 
 > **Development build.** The application is implemented for development and review. Automated checks and native build results are recorded in the [QA report](docs/QA_REPORT.md); physical-device, network and platform checks are kept distinct from those results.
 
-[Get started](#get-started) · [Features](#features) · [Device synchronization](#device-synchronization) · [Data portability](#data-portability) · [Architecture](docs/ARCHITECTURE.md) · [Product checklist](docs/PRODUCT_SPEC.md)
+[Download for Windows](#download-for-windows) · [Development](#get-started) · [Features](#features) · [Device synchronization](#device-synchronization) · [Data portability](#data-portability) · [Product checklist](docs/PRODUCT_SPEC.md)
 
 ![Inbox in the native Linux development build](docs/screenshots/desktop-inbox.png)
 
 *Actual Linux development build running in Xvfb. Android appearance and device behavior require separate validation.*
+
+## Download for Windows
+
+For Windows 10 (2004 or newer) and Windows 11, x64:
+
+- **[Download the installer](https://github.com/v-like-engine/JustOrganizeYourself/releases/download/v0.1.0-windows-preview.1/JOY-Windows-Setup.exe)** — install for your user account, then open the app from the Start menu or desktop shortcut. Administrator rights are not required.
+- **[Download the portable ZIP](https://github.com/v-like-engine/JustOrganizeYourself/releases/download/v0.1.0-windows-preview.1/JOY-Windows-Portable.zip)** — extract the whole archive and double-click `JustOrganizeYourself.exe`.
+
+Flutter, Visual Studio, Python, Java and a separate database installation are not required to use these packages. Runtime libraries are bundled. Your tasks stay in your Windows user profile when the application is updated or uninstalled.
+
+This preview is unsigned, so Windows may show an unknown-publisher warning. See the [Windows guide in Russian](docs/WINDOWS.md) and the [release page](https://github.com/v-like-engine/JustOrganizeYourself/releases/tag/v0.1.0-windows-preview.1) for instructions and checksums. Optional semantic embeddings remain a separate component.
 
 ## Features
 
@@ -27,6 +38,8 @@ A **Getting Things Done (GTD)** application that stores your workspace on your o
 | **Portable workspace** | SQLite for daily work; one `.xlsx` for data, hierarchy, settings, revisions, deletion markers and supported embedding metadata. |
 
 ## Get started
+
+For ordinary Windows use, follow [Download for Windows](#download-for-windows). The SDK and compiler instructions below are for developers building from source.
 
 The interface is written in **Flutter and Dart**. Android is the first mobile target; Linux, Windows and macOS platform projects are included. iOS is not part of this implementation. Native platform validation depends on the host and available devices; see the QA report for what was actually built and run.
 

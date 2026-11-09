@@ -2,7 +2,16 @@ name: Windows packages
 
 on:
   push:
-    branches: [main, feat/flutter-gtd-app]
+    branches: [main]
+    tags: ['v*-windows-preview.*']
+    paths:
+      - '.github/workflows/windows.yml'
+      - '.flutter-version'
+      - 'apps/joy/**'
+      - 'packages/joy_core/**'
+      - 'scripts/windows/**'
+      - 'packaging/windows/**'
+  pull_request:
     paths:
       - '.github/workflows/windows.yml'
       - '.flutter-version'
@@ -109,3 +118,40 @@ jobs:
             artifacts/windows/JOY-Windows-Portable.zip
             artifacts/windows/SHA256SUMS.txt
           if-no-files-found: error
+
+  release-draft:
+    if: github.ref_type == 'tag'
+    needs: windows
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: joy-windows-x64
+          path: windows-package
+
+      - name: Verify and attach packages to a draft release
+        working-directory: windows-package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          for line in Path('SHA256SUMS.txt').read_text(encoding='utf-8-sig').splitlines():
+              digest, name = line.split(None, 1)
+              with Path(name.strip()).open('rb') as stream:
+                  assert hashlib.file_digest(stream, 'sha256').hexdigest() == digest
+          PY
+          tag="$GITHUB_REF_NAME"
+          if gh release view "$tag" --json isDraft --jq .isDraft > draft-status.txt; then
+            test "$(cat draft-status.txt)" = true || { echo 'Refusing to overwrite a published release.'; exit 1; }
+          else
+            gh release create "$tag" --verify-tag --draft --prerelease --title "Windows preview $tag" --notes 'Verified Windows installer and portable package.'
+          fi
+          gh release upload "$tag" JOY-Windows-Setup.exe JOY-Windows-Portable.zip SHA256SUMS.txt --clobber
+          echo 'Verified Windows packages attached to the draft release. Publication remains a separate step.' >> "$GITHUB_STEP_SUMMARY"
