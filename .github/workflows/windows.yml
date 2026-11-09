@@ -1,0 +1,111 @@
+name: Windows packages
+
+on:
+  push:
+    branches: [main, feat/flutter-gtd-app]
+    paths:
+      - '.github/workflows/windows.yml'
+      - '.flutter-version'
+      - 'apps/joy/**'
+      - 'packages/joy_core/**'
+      - 'scripts/windows/**'
+      - 'packaging/windows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Select pinned Flutter SDK
+        id: sdk
+        run: |
+          "version=$((Get-Content .flutter-version -Raw).Trim())" >> $env:GITHUB_OUTPUT
+
+      - uses: actions/cache/restore@v4
+        id: flutter-cache
+        with:
+          path: ${{ runner.temp }}/joy-flutter
+          key: flutter-windows-x64-${{ steps.sdk.outputs.version }}
+
+      - name: Install verified Flutter SDK
+        run: ./scripts/windows/install-flutter.ps1 -Version '${{ steps.sdk.outputs.version }}' -ToolsDirectory '${{ runner.temp }}/joy-flutter'
+
+      - uses: actions/cache/save@v4
+        if: steps.flutter-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/joy-flutter
+          key: flutter-windows-x64-${{ steps.sdk.outputs.version }}
+
+      - name: Resolve and analyze
+        working-directory: apps/joy
+        run: |
+          flutter config --no-analytics
+          flutter pub get
+          flutter analyze
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build release
+        working-directory: apps/joy
+        run: |
+          flutter build windows --release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Package portable app and per-user installer
+        run: ./scripts/windows/package.ps1
+
+      - name: Windows core and interface tests
+        run: |
+          $env:PATH = "$PWD/artifacts/windows/JustOrganizeYourself;$env:PATH"
+          Push-Location packages/joy_core
+          dart pub get
+          dart test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Pop-Location
+          Push-Location apps/joy
+          flutter test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Native portable startup without developer tools on PATH
+        run: ./scripts/windows/smoke.ps1 -BundleDirectory artifacts/windows/JustOrganizeYourself
+
+      - name: Installer, installed startup and user-data retention
+        run: |
+          $install = Join-Path $env:RUNNER_TEMP 'joy-installed'
+          $setup = Start-Process ./artifacts/windows/JOY-Windows-Setup.exe -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/DIR=$install") -Wait -PassThru
+          if ($setup.ExitCode -ne 0) { throw "Installer failed: $($setup.ExitCode)" }
+          ./scripts/windows/smoke.ps1 -BundleDirectory $install -Label installed
+          $database = Join-Path ([Environment]::GetFolderPath('ApplicationData')) 'dev.justorganize/joy/joy.sqlite'
+          $saved = @{}
+          Get-ChildItem "$database*" -File | ForEach-Object { $saved[$_.FullName] = (Get-FileHash $_.FullName -Algorithm SHA256).Hash }
+          $uninstall = Start-Process (Join-Path $install 'unins000.exe') -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -Wait -PassThru
+          if ($uninstall.ExitCode -ne 0) { throw "Uninstaller failed: $($uninstall.ExitCode)" }
+          if (-not (Test-Path $database)) { throw 'Uninstall removed the user workspace.' }
+          foreach ($path in $saved.Keys) {
+            if (-not (Test-Path $path) -or (Get-FileHash $path -Algorithm SHA256).Hash -ne $saved[$path]) {
+              throw 'Uninstall changed the saved user workspace.'
+            }
+          }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: joy-windows-x64
+          path: |
+            artifacts/windows/JOY-Windows-Setup.exe
+            artifacts/windows/JOY-Windows-Portable.zip
+            artifacts/windows/SHA256SUMS.txt
+          if-no-files-found: error
