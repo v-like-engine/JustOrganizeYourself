@@ -79,7 +79,7 @@ To run the Linux client with its native toolchain installed:
 make run
 ```
 
-On a suitable Windows or macOS host, run `flutter run -d windows` or `flutter run -d macos` from `apps/joy`. The presence of platform files is not a claim that those builds have been tested on this Linux host.
+Developers can run `flutter run -d windows` or `flutter run -d macos` from `apps/joy` on the corresponding host. Windows release packaging and native startup are verified separately in [Windows validation](docs/WINDOWS_VALIDATION.md); macOS has not been validated.
 
 The client opens `joy.sqlite` in the platform's application-support directory. It does not require a database server, Python process or cloud account for capture, organization, file exchange or peer synchronization.
 
@@ -146,6 +146,7 @@ Useful documentation:
 - [Product specification and implementation checklist](docs/PRODUCT_SPEC.md) — requirements, acceptance scenarios and open decisions, in Russian.
 - [Architecture](docs/ARCHITECTURE.md) and [contracts](docs/CONTRACTS.md) — ownership, schemas and interaction between components.
 - [QA report](docs/QA_REPORT.md) — actual test evidence and remaining limitations.
+- [Windows validation](docs/WINDOWS_VALIDATION.md) — executed Windows build, runtime, installer and data-retention checks.
 - [Contributing](CONTRIBUTING.md) — development checks and architect/critic review responsibilities.
 
 Tests cover storage, workbook round trips and undo, revision-aware peer exchange, Flutter interactions and the Python API. See the QA report for the current executed counts and results. Native Android, physical-device gestures, household Wi-Fi, Google Calendar and other desktop platforms require their own evidence; they are not inferred from unit tests.
