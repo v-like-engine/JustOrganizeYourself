@@ -1,6 +1,6 @@
 # JOY icon
 
-The JOY wordmark combines dark forest-teal lettering, a warm ivory tile and mint/lavender card tabs. The ascending card arrangement suggests swipe processing and forward motion while the letters stay readable.
+The JOY mark uses an upright wordmark and a clearly aligned three-row checklist. Charcoal lettering, a pale neutral background and a restrained sage accent identify a task organizer rather than a game. The geometry stays horizontal and vertical, with consistent spacing and no angled cards.
 
 `joy-icon.png` is the full-resolution generated artwork. Application files are format/size exports of this artwork; the export step does not redraw the design.
 
