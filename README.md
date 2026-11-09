@@ -1,5 +1,7 @@
 # Just Organize Yourself
 
+<img src="branding/joy-icon.png" width="88" alt="JOY app icon">
+
 ### Capture freely. Clarify deliberately. Keep your data portable.
 
 A **Getting Things Done (GTD)** application that stores your workspace on your own devices. Capture a thought, process one Inbox card at a time, organize projects and personal lists, then move your system between devices over the local network or in one Excel workbook.

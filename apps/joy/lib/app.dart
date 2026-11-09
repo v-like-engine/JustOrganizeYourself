@@ -272,13 +272,11 @@ class _WorkspaceState extends State<Workspace> with WidgetsBindingObserver {
             padding: const EdgeInsets.fromLTRB(20, 24, 12, 22),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xff326c57),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.spa_outlined, color: Colors.white),
+                Image.asset(
+                  'assets/joy-icon.png',
+                  width: 44,
+                  height: 44,
+                  semanticLabel: 'JOY',
                 ),
                 const SizedBox(width: 12),
                 const Expanded(

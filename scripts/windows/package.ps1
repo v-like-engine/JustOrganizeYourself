@@ -1,10 +1,16 @@
 param(
     [string]$ReleaseDirectory = 'apps/joy/build/windows/x64/runner/Release',
     [string]$OutputDirectory = 'artifacts/windows',
-    [string]$AppVersion = '0.1.0'
+    [string]$AppVersion
 )
 
 $ErrorActionPreference = 'Stop'
+if ([string]::IsNullOrWhiteSpace($AppVersion)) {
+    $manifest = Get-Content (Join-Path $PSScriptRoot '../../apps/joy/pubspec.yaml') -Raw
+    $version = [regex]::Match($manifest, '(?m)^version:\s*(\d+\.\d+\.\d+)')
+    if (-not $version.Success) { throw 'Application version was not found in pubspec.yaml.' }
+    $AppVersion = $version.Groups[1].Value
+}
 $release = (Resolve-Path $ReleaseDirectory).Path
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 $output = (Resolve-Path $OutputDirectory).Path

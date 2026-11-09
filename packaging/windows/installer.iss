@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "0.1.0"
+  #error AppVersion is required.
 #endif
 #ifndef BundleDirectory
   #error BundleDirectory must point to the self-contained release folder.
@@ -25,6 +25,7 @@ Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayIcon={app}\JustOrganizeYourself.exe
+SetupIconFile=..\..\apps\joy\windows\runner\resources\app_icon.ico
 CloseApplications=yes
 
 [Languages]
